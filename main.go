@@ -1,9 +1,16 @@
 package main
 
 import (
+	"booking-app/helper"
 	"fmt"
-	"strings"
 )
+
+type UserData struct {
+	firstName    string
+	lastName     string
+	emailAddress string
+	ticketCount  int
+}
 
 func main() {
 	var totalTickets int = 50
@@ -13,7 +20,8 @@ func main() {
 	var lastName string
 	var emailAddress string
 	var tickets int
-	var bookingList []string
+	//var bookingList = make([]map[string]string, 0)
+	var bookingList []UserData
 	fmt.Println("Welcome to", conferenceName, "!")
 	fmt.Println("You have", availableTickets, "available tickets out of ", totalTickets)
 
@@ -32,19 +40,24 @@ func main() {
 			fmt.Scan(&tickets)
 
 			//var isValidName bool = len(firstName) >= 2 && len(lastName) >= 2
-			isValidName := len(firstName) >= 2 && len(lastName) >= 2
+			isValidName := helper.IsValidUserName(firstName, lastName)
 			var isValidTicketCount bool = tickets > 0 && availableTickets >= tickets
 
 			if isValidName && isValidTicketCount {
 				availableTickets = availableTickets - tickets
-				bookingList = append(bookingList, firstName+" "+lastName)
+				/*var userData = make(map[string](string))
+				userData["firstName"] = firstName
+				userData["lastName"] = lastName
+				userData["ticketCount"] = strconv.Itoa(tickets)*/
+				var userData UserData
+				userData.firstName = firstName
+				userData.lastName = lastName
+				userData.emailAddress = emailAddress
+				userData.ticketCount = tickets
+				bookingList = append(bookingList, userData)
 				fmt.Printf("Hi %v %v, Thanks for booking %v tickets with us. We still have %v tickets remaining \n", firstName, lastName, tickets, availableTickets)
-				var firstNames []string
-
-				for _, element := range bookingList {
-					var splittedNameList []string = strings.Fields(element)
-					firstNames = append(firstNames, splittedNameList[0])
-				}
+				fmt.Printf("The booking map list so far %v", bookingList)
+				firstNames := bookTickets(bookingList)
 				fmt.Printf("Booked user List %v \n", firstNames)
 
 			} else {
@@ -62,4 +75,15 @@ func main() {
 			break
 		}
 	}
+}
+
+func bookTickets(bookingList []UserData) []string {
+	var firstNames []string
+	for _, element := range bookingList {
+		//var splittedNameList []string = strings.Fields(element)
+		//firstNames = append(firstNames, element["firstName"])
+		firstNames = append(firstNames, element.firstName)
+	}
+
+	return firstNames
 }
